@@ -42,31 +42,38 @@ app.get('/', (req, res) => {
     .catch(err => console.log(err))
 })
 
-// app.get("/search", (req, res) => {
-//   if (!req.query.keywords) {
-//     return res.redirect("/")
-//   }
+// 搜尋特定餐廳
+app.get("/search", (req, res) => {
+  if (!req.query.keywords) {
+    res.redirect("/")
+  }
 
-//   const keywords = req.query.keywords
-//   const keyword = req.query.keywords.trim().toLowerCase()
+  const keywords = req.query.keywords
+  const keyword = req.query.keywords.trim().toLowerCase()
 
-//   const filterRestaurantsData = restaurantsData.filter(
-//     data =>
-//       data.name.toLowerCase().includes(keyword) ||
-//       data.category.includes(keyword)
-//   )
-//   res.render("index", { restaurantsData: filterRestaurantsData, keywords })
-// })
-
-// app.get("/restaurants/:restaurantId", (req, res) => {
-//   const { restaurantId } = req.params
-//   const restaurantData = restaurantsData.find(
-//     data => data.id === Number(restaurantId)
-//   )
-//   res.render("show", { restaurantData })
-// })
-
-// start and listen on the Express server
-app.listen(port, () => {
-  console.log(`Express is listening on localhost:${port}`)
+  Restaurant.find({})
+    .lean()
+    .then(restaurantsData => {
+      const filterRestaurantsData = restaurantsData.filter(
+        data =>
+          data.name.toLowerCase().includes(keyword) ||
+          data.name_en.toLowerCase().includes(keyword) ||
+          data.category.includes(keyword)
+      )
+      res.render("index", { restaurantsData: filterRestaurantsData, keywords })
+    })
+    .catch(err => console.log(err))
 })
+
+// 瀏覽特定餐廳
+app.get("/restaurants/:restaurantId", (req, res) => {
+  const { restaurantId } = req.params
+  Restaurant.findById(restaurantId)
+    .lean()
+    .then(restaurantData => res.render("show", { restaurantData }))
+    .catch(err => console.log(err))
+})
+  // start and listen on the Express server
+  app.listen(port, () => {
+    console.log(`Express is listening on localhost:${port}`)
+  })
