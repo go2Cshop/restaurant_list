@@ -86,6 +86,24 @@ app.post("/restaurants", (req, res) => {
     .catch(err => console.log(err))
 })
 
+
+// 編輯餐廳頁面
+app.get("/restaurants/:restaurantId/edit", (req, res) => {
+  const { restaurantId } = req.params
+  Restaurant.findById(restaurantId)
+    .lean()
+    .then(restaurantData => res.render("edit", { restaurantData }))
+    .catch(err => console.log(err))
+})
+
+// 更新餐廳
+app.put("/restaurants/:restaurantId", (req, res) => {
+  const { restaurantId } = req.params
+  Restaurant.findByIdAndUpdate(restaurantId, req.body)
+    .then(() => res.redirect(`/restaurants/${restaurantId}`))
+    .catch(err => console.log(err))
+})
+
 // 刪除餐廳
 app.delete("/restaurants/:restaurantId", (req, res) => {
   const { restaurantId } = req.params
@@ -93,10 +111,6 @@ app.delete("/restaurants/:restaurantId", (req, res) => {
     .then(() => res.redirect("/"))
     .catch(err => console.log(err))
 })
-
-// 編輯餐廳頁面
-
-// 更新餐廳
 
 // start and listen on the Express server
 app.listen(port, () => {
