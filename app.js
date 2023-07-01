@@ -104,7 +104,7 @@ app.put("/restaurants/:restaurantId", (req, res) => {
     .catch(err => console.log(err))
 })
 
-// 刪除餐廳
+// 刪除餐廳功能
 app.delete("/restaurants/:restaurantId", (req, res) => {
   const { restaurantId } = req.params
   Restaurant.findByIdAndDelete(restaurantId)
